@@ -6,7 +6,6 @@ import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.size
@@ -114,8 +113,7 @@ fun Artwork(
                 .wrapContentSize()
                 .fillMaxSize(),
             pageSpacing = CAROUSEL_PAGE_SPACING_DP.dp,
-            beyondViewportPageCount = 1,
-            contentPadding = PaddingValues(horizontal = 45.dp)
+            beyondViewportPageCount = 1
         ) { page ->
             val pageOffset = (
                 (pagerState.currentPage - page) + pagerState.currentPageOffsetFraction
