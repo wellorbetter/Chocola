@@ -68,15 +68,8 @@ fun Artwork(
             pageCount = { musicState.loadedMedias.size }
         )
 
-        // True while animateScrollToPage is running; suppresses the gesture→playback
-        // collector so external track changes don't trigger a redundant SeekToMusicIndex.
-        // Safe without synchronization: all Compose State mutations run on the main thread,
-        // and animateScrollToPage only resumes after the animation fully completes.
         var isProgrammaticScroll by remember { mutableStateOf(false) }
 
-        // External track change (buttons, notification) → animate pager to match.
-        // We check isScrollInProgress (not settledPage) to avoid interrupting an
-        // in-progress user gesture; the gesture collector below uses settledPage instead.
         LaunchedEffect(musicState.mediaIndex) {
             if (!pagerState.isScrollInProgress &&
                 pagerState.currentPage != musicState.mediaIndex
@@ -87,29 +80,19 @@ fun Artwork(
             }
         }
 
-        // rememberUpdatedState lets this once-launched effect always read current values.
         val currentMediaIndex by rememberUpdatedState(musicState.mediaIndex)
         val currentShuffle by rememberUpdatedState(musicState.shuffle)
         val currentTrackCount by rememberUpdatedState(musicState.loadedMedias.size)
 
-        // User gesture → playback: settledPage only emits after the pager fully stops,
-        // so fast flings produce exactly one emission with no extra debounce logic needed.
         LaunchedEffect(pagerState) {
             snapshotFlow { pagerState.settledPage }
                 .distinctUntilChanged()
                 .collect { settledPage ->
-                    // Boundary protection: do nothing if the list is empty
                     if (currentTrackCount == 0) return@collect
-                    // Clamp to valid range in case state is momentarily inconsistent
                     val safeIndex = settledPage.coerceIn(0, currentTrackCount - 1)
-
-                    // Skip if this scroll was driven by code, not by the user
                     if (isProgrammaticScroll) return@collect
-
                     if (safeIndex != currentMediaIndex) {
                         if (currentShuffle) {
-                            // Respect swipe direction in shuffle mode instead of jumping
-                            // to a fully random track — gives a more intentional feel.
                             if (safeIndex > currentMediaIndex) {
                                 onHandlePlayerActions(PlayerActions.SeekToNextMusic)
                             } else {
@@ -132,12 +115,10 @@ fun Artwork(
             pageSpacing = CAROUSEL_PAGE_SPACING_DP.dp,
             beyondViewportPageCount = 1
         ) { page ->
-            // Distance of this page from the current visible page (0.0 = focused page)
             val pageOffset = (
                 (pagerState.currentPage - page) + pagerState.currentPageOffsetFraction
             ).absoluteValue
 
-            // Neighbours are scaled down and dimmed; the focused page is full-size/opaque
             val scale = lerp(start = CAROUSEL_MIN_SCALE, stop = 1.0f, fraction = 1f - pageOffset.coerceIn(0f, 1f))
             val alpha = lerp(start = CAROUSEL_MIN_ALPHA, stop = 1.0f, fraction = 1f - pageOffset.coerceIn(0f, 1f))
 
@@ -161,7 +142,6 @@ fun Artwork(
         }
 
     } else {
-        // Non-carousel branch: single static artwork image
         val image =
             rememberAsyncImagePainter(ImageUtils.imageRequester(musicState.track.artUri, context))
 

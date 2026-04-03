@@ -30,8 +30,6 @@ fun TitleAndArtist(
     titleModifier: Modifier = Modifier,
     musicState: MusicState
 ) {
-    // Animate title/artist as a unit whenever the track changes (keyed by mediaId).
-    // New track slides up into view while the old one slides out downward.
     AnimatedContent(
         targetState = musicState.track,
         transitionSpec = {
