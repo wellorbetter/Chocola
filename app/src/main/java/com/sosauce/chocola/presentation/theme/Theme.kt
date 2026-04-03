@@ -64,8 +64,7 @@ fun CuteMusicTheme(
     DynamicMaterialExpressiveTheme(
         state = state,
         motionScheme = MotionScheme.expressive(),
-        // Animate theme color transitions when artwork changes (e.g. song switch)
-        animate = true,
+        animate = false,
         typography = if (useSystemFont) MaterialTheme.typography else NunitoTypography,
         content = content
     )

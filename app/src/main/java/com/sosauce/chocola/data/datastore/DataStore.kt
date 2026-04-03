@@ -107,7 +107,7 @@ fun rememberGroupByFolders() =
 
 @Composable
 fun rememberCarousel() =
-    rememberPreference(key = CAROUSEL, defaultValue = true)
+    rememberPreference(key = CAROUSEL, defaultValue = false)
 
 @Composable
 fun rememberAlbumGrids() =
