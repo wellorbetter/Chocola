@@ -64,7 +64,7 @@ fun CuteMusicTheme(
     DynamicMaterialExpressiveTheme(
         state = state,
         motionScheme = MotionScheme.expressive(),
-        animate = true,
+        animate = false,
         typography = if (useSystemFont) MaterialTheme.typography else NunitoTypography,
         content = content
     )
