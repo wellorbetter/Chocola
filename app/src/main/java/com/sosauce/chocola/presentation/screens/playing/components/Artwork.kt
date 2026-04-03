@@ -122,9 +122,7 @@ fun Artwork(
             val scale = lerp(start = CAROUSEL_MIN_SCALE, stop = 1.0f, fraction = 1f - pageOffset.coerceIn(0f, 1f))
             val alpha = lerp(start = CAROUSEL_MIN_ALPHA, stop = 1.0f, fraction = 1f - pageOffset.coerceIn(0f, 1f))
 
-            val image = rememberAsyncImagePainter(
-                ImageUtils.imageRequester(musicState.loadedMedias[page].artUri, context)
-            )
+            val image = rememberAsyncImagePainter(musicState.loadedMedias[page].artUri)
 
             ArtworkImage(
                 painter = image,
